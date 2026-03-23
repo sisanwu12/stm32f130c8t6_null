@@ -1,7 +1,9 @@
 /**
  * @file dri_ll_gpio.h
- * @author BEAM (you@domain.com)
- * @brief
+ * @author BEAM
+ * @brief STM32F103 GPIO 底层驱动对外接口，基于寄存器直接访问方式实现。
+ * @note 本模块只负责 GPIO 本身的地址映射、模式配置与电平读写，不负责 RCC 时钟开启。
+ *       在调用初始化接口或其他 GPIO 访问接口之前，需要先由外部 RCC 模块打开对应 GPIO 端口时钟。
  * @version 0.1
  * @date 2026-03-23
  *
@@ -23,7 +25,6 @@ extern "C"
 
 #define DRI_LL_PERIPH_BASE_ADDR      (0x40000000UL) // 片上外设总线基地址
 #define DRI_LL_APB2_PERIPH_BASE_ADDR (0x40010000UL) // APB2 外设总线基地址
-#define DRI_LL_RCC_BASE_ADDR         (0x40021000UL) // RCC 寄存器基地址
 
 #define DRI_LL_AFIO_BASE_ADDR (0x40010000UL) // AFIO 起始地址
 #define DRI_LL_AFIO_END_ADDR  (0x400103FFUL) // AFIO 终止地址
@@ -50,22 +51,6 @@ extern "C"
 #define DRI_LL_GPIO_BRR_OFFSET  (0x14UL) // GPIO BRR 寄存器偏移
 #define DRI_LL_GPIO_LCKR_OFFSET (0x18UL) // GPIO LCKR 寄存器偏移
 
-#define DRI_LL_RCC_APB2ENR_OFFSET (0x18UL) // RCC APB2ENR 寄存器偏移
-
-#define DRI_LL_RCC_APB2ENR_AFIOEN_Pos (0U) // AFIO 时钟使能位位置
-#define DRI_LL_RCC_APB2ENR_IOPAEN_Pos (2U) // GPIOA 时钟使能位位置
-#define DRI_LL_RCC_APB2ENR_IOPBEN_Pos (3U) // GPIOB 时钟使能位位置
-#define DRI_LL_RCC_APB2ENR_IOPCEN_Pos (4U) // GPIOC 时钟使能位位置
-#define DRI_LL_RCC_APB2ENR_IOPDEN_Pos (5U) // GPIOD 时钟使能位位置
-#define DRI_LL_RCC_APB2ENR_IOPEEN_Pos (6U) // GPIOE 时钟使能位位置
-
-#define DRI_LL_RCC_APB2ENR_AFIOEN_Msk (1UL << DRI_LL_RCC_APB2ENR_AFIOEN_Pos) // AFIO 时钟使能位掩码
-#define DRI_LL_RCC_APB2ENR_IOPAEN_Msk (1UL << DRI_LL_RCC_APB2ENR_IOPAEN_Pos) // GPIOA 时钟使能位掩码
-#define DRI_LL_RCC_APB2ENR_IOPBEN_Msk (1UL << DRI_LL_RCC_APB2ENR_IOPBEN_Pos) // GPIOB 时钟使能位掩码
-#define DRI_LL_RCC_APB2ENR_IOPCEN_Msk (1UL << DRI_LL_RCC_APB2ENR_IOPCEN_Pos) // GPIOC 时钟使能位掩码
-#define DRI_LL_RCC_APB2ENR_IOPDEN_Msk (1UL << DRI_LL_RCC_APB2ENR_IOPDEN_Pos) // GPIOD 时钟使能位掩码
-#define DRI_LL_RCC_APB2ENR_IOPEEN_Msk (1UL << DRI_LL_RCC_APB2ENR_IOPEEN_Pos) // GPIOE 时钟使能位掩码
-
 #define DRI_LL_GPIO_PIN_COUNT (16U) // 每个 GPIO 端口拥有 16 个引脚
 
     typedef struct // GPIO 寄存器映射结构体
@@ -79,26 +64,11 @@ extern "C"
         volatile uint32_t LCKR; // 配置锁定寄存器
     } dri_ll_gpio_reg_t;        // GPIO 寄存器映射类型
 
-    typedef struct // RCC 寄存器映射结构体
-    {
-        volatile uint32_t CR;       // 时钟控制寄存器
-        volatile uint32_t CFGR;     // 时钟配置寄存器
-        volatile uint32_t CIR;      // 时钟中断寄存器
-        volatile uint32_t APB2RSTR; // APB2 外设复位寄存器
-        volatile uint32_t APB1RSTR; // APB1 外设复位寄存器
-        volatile uint32_t AHBENR;   // AHB 外设时钟使能寄存器
-        volatile uint32_t APB2ENR;  // APB2 外设时钟使能寄存器
-        volatile uint32_t APB1ENR;  // APB1 外设时钟使能寄存器
-        volatile uint32_t BDCR;     // 备份域控制寄存器
-        volatile uint32_t CSR;      // 控制/状态寄存器
-    } dri_ll_rcc_reg_t;             // RCC 寄存器映射类型
-
 #define DRI_LL_GPIOA ((dri_ll_gpio_reg_t*)DRI_LL_GPIOA_BASE_ADDR) // GPIOA 寄存器入口
 #define DRI_LL_GPIOB ((dri_ll_gpio_reg_t*)DRI_LL_GPIOB_BASE_ADDR) // GPIOB 寄存器入口
 #define DRI_LL_GPIOC ((dri_ll_gpio_reg_t*)DRI_LL_GPIOC_BASE_ADDR) // GPIOC 寄存器入口
 #define DRI_LL_GPIOD ((dri_ll_gpio_reg_t*)DRI_LL_GPIOD_BASE_ADDR) // GPIOD 寄存器入口
 #define DRI_LL_GPIOE ((dri_ll_gpio_reg_t*)DRI_LL_GPIOE_BASE_ADDR) // GPIOE 寄存器入口
-#define DRI_LL_RCC   ((dri_ll_rcc_reg_t*)DRI_LL_RCC_BASE_ADDR)    // RCC 寄存器入口
 
     /* ==================== 基础操作层 ==================== */ // GPIO 基础寄存器操作层
 
@@ -132,9 +102,8 @@ extern "C"
     } dri_ll_gpio_pin_t;          // GPIO 引脚类型
 
     dri_ll_gpio_reg_t*
-             dri_ll_gpio_get_reg(dri_ll_gpio_port_t port);    // 根据端口编号获取 GPIO 寄存器入口
-    uint16_t dri_ll_gpio_get_pin_mask(dri_ll_gpio_pin_t pin); // 根据引脚编号生成位掩码
-    void     dri_ll_gpio_clock_enable_raw(dri_ll_gpio_port_t port); // 直接打开指定 GPIO 端口时钟
+             dri_ll_gpio_get_reg(dri_ll_gpio_port_t port);       // 根据端口编号获取 GPIO 寄存器入口
+    uint16_t dri_ll_gpio_get_pin_mask(dri_ll_gpio_pin_t pin);    // 根据引脚编号生成位掩码
     void     dri_ll_gpio_config_pin_raw(dri_ll_gpio_port_t port, // 直接写入指定引脚的 4bit 配置字段
                                         dri_ll_gpio_pin_t pin, uint32_t cfg_bits);
     void     dri_ll_gpio_write_mask_raw(dri_ll_gpio_port_t port, // 通过 BSRR 原子写入置位和复位掩码
@@ -172,7 +141,7 @@ extern "C"
         DRI_LL_GPIO_MODE_AF_PP_10MHZ     = 0x9U, // 复用推挽输出 10MHz
         DRI_LL_GPIO_MODE_AF_PP_2MHZ      = 0xAU, // 复用推挽输出 2MHz
         DRI_LL_GPIO_MODE_AF_PP_50MHZ     = 0xBU, // 复用推挽输出 50MHz
-        DRI_LL_GPIO_MODE_RESERVED_INPUT  = 0xCU, // 保留输入配置位型
+        DRI_LL_GPIO_MODE_RESERVED_INPUT  = 0xCU, // 保留输入配置位型，初始化接口禁止使用
         DRI_LL_GPIO_MODE_AF_OD_10MHZ     = 0xDU, // 复用开漏输出 10MHz
         DRI_LL_GPIO_MODE_AF_OD_2MHZ      = 0xEU, // 复用开漏输出 2MHz
         DRI_LL_GPIO_MODE_AF_OD_50MHZ     = 0xFU, // 复用开漏输出 50MHz
@@ -187,9 +156,10 @@ extern "C"
         dri_ll_gpio_level_t initial_level; // 输出初始电平
     } dri_ll_gpio_init_t;                  // GPIO 初始化参数类型
 
-    void dri_ll_gpio_port_clock_enable(dri_ll_gpio_port_t port); // 打开指定端口时钟
-    void dri_ll_gpio_init(const dri_ll_gpio_init_t* config);     // 初始化一个 GPIO 引脚
-    void dri_ll_gpio_write_pin(dri_ll_gpio_port_t port,          // 写一个 GPIO 引脚电平
+    void
+         dri_ll_gpio_init(const dri_ll_gpio_init_t*
+                              config); // 初始化一个 GPIO 引脚，调用前需先由外部 RCC 模块打开端口时钟
+    void dri_ll_gpio_write_pin(dri_ll_gpio_port_t port, // 写一个 GPIO 引脚电平
                                dri_ll_gpio_pin_t pin, dri_ll_gpio_level_t level);
     void dri_ll_gpio_set_pin(dri_ll_gpio_port_t port,
                              dri_ll_gpio_pin_t  pin); // 将一个 GPIO 引脚置高
