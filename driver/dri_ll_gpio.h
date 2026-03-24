@@ -27,21 +27,14 @@ extern "C"
 #define DRI_LL_APB2_PERIPH_BASE_ADDR (0x40010000UL) // APB2 外设总线基地址
 
 #define DRI_LL_AFIO_BASE_ADDR (0x40010000UL) // AFIO 起始地址
-#define DRI_LL_AFIO_END_ADDR  (0x400103FFUL) // AFIO 终止地址
 #define DRI_LL_EXTI_BASE_ADDR (0x40010400UL) // EXTI 起始地址
-#define DRI_LL_EXTI_END_ADDR  (0x400107FFUL) // EXTI 终止地址
 
 #define DRI_LL_GPIO_PORT_SPAN  (0x00000400UL) // 单个 GPIO 端口的地址跨度
 #define DRI_LL_GPIOA_BASE_ADDR (0x40010800UL) // GPIOA 起始地址
-#define DRI_LL_GPIOA_END_ADDR  (0x40010BFFUL) // GPIOA 终止地址
 #define DRI_LL_GPIOB_BASE_ADDR (0x40010C00UL) // GPIOB 起始地址
-#define DRI_LL_GPIOB_END_ADDR  (0x40010FFFUL) // GPIOB 终止地址
 #define DRI_LL_GPIOC_BASE_ADDR (0x40011000UL) // GPIOC 起始地址
-#define DRI_LL_GPIOC_END_ADDR  (0x400113FFUL) // GPIOC 终止地址
 #define DRI_LL_GPIOD_BASE_ADDR (0x40011400UL) // GPIOD 起始地址
-#define DRI_LL_GPIOD_END_ADDR  (0x400117FFUL) // GPIOD 终止地址
 #define DRI_LL_GPIOE_BASE_ADDR (0x40011800UL) // GPIOE 起始地址
-#define DRI_LL_GPIOE_END_ADDR  (0x40011BFFUL) // GPIOE 终止地址
 
 #define DRI_LL_GPIO_CRL_OFFSET  (0x00UL) // GPIO CRL 寄存器偏移
 #define DRI_LL_GPIO_CRH_OFFSET  (0x04UL) // GPIO CRH 寄存器偏移
@@ -123,10 +116,10 @@ extern "C"
 
     typedef enum // GPIO 输入模式枚举
     {
-        DRI_LL_GPIO_INPUT_MODE_NONE     = 0U, // 不使用输入模式
-        DRI_LL_GPIO_INPUT_MODE_ANALOG   = 1U, // 模拟输入
-        DRI_LL_GPIO_INPUT_MODE_FLOATING = 2U, // 浮空输入
-        DRI_LL_GPIO_INPUT_MODE_PULL_UP  = 3U, // 上拉输入
+        DRI_LL_GPIO_INPUT_MODE_NONE      = 0U, // 不使用输入模式
+        DRI_LL_GPIO_INPUT_MODE_ANALOG    = 1U, // 模拟输入
+        DRI_LL_GPIO_INPUT_MODE_FLOATING  = 2U, // 浮空输入
+        DRI_LL_GPIO_INPUT_MODE_PULL_UP   = 3U, // 上拉输入
         DRI_LL_GPIO_INPUT_MODE_PULL_DOWN = 4U, // 下拉输入
     } dri_ll_gpio_input_mode_t;                // GPIO 输入模式类型
 
@@ -155,7 +148,7 @@ extern "C"
         dri_ll_gpio_output_mode_t output_mode;   // 输出模式，和输入模式二选一启用
         dri_ll_gpio_speed_t       speed;         // 输出速度，仅输出模式下有效
         dri_ll_gpio_level_t       initial_level; // 输出初始电平，仅输出模式下有效
-    } dri_ll_gpio_init_t;                  // GPIO 初始化参数类型
+    } dri_ll_gpio_init_t;                        // GPIO 初始化参数类型
 
     void
          dri_ll_gpio_init(const dri_ll_gpio_init_t*
