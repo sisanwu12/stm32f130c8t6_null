@@ -1,3 +1,4 @@
 # 排除 build
 build/
-
+# 排除 .cache
+.cache/

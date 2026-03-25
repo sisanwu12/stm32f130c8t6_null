@@ -11,6 +11,7 @@
 #define __DATA_TYPE_H__
 
 #include "stdbool.h"
+#include "stddef.h"
 #include "stdint.h"
 
 #ifdef __cplusplus // 兼容 C++ 编译器
