@@ -12,29 +12,32 @@
         inherit system;
         config.allowUnfree = true;
       };
+      llvmPkgs = pkgs.llvmPackages;
     in {
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
-          vscode
           cmake
           ninja
           gcc-arm-embedded
           openocd
-          clang-tools
+          llvmPkgs.clang
+          llvmPkgs.clang-tools
           gnumake
           git
           pkg-config
         ];
 
         shellHook = ''
-          echo "Embedded dev shell is ready."
-          echo "Tools:"
-          echo "  code      -> $(command -v code || echo not-found)"
-          echo "  cmake     -> $(command -v cmake || echo not-found)"
-          echo "  ninja     -> $(command -v ninja || echo not-found)"
-          echo "  arm-none-eabi-gcc -> $(command -v arm-none-eabi-gcc || echo not-found)"
-          echo "  openocd   -> $(command -v openocd || echo not-found)"
-          echo "  clangd    -> $(command -v clangd || echo not-found)"
+          if [ -t 1 ]; then
+            echo "Embedded dev shell is ready."
+            echo "Tools:"
+            echo "  cmake     -> $(command -v cmake || echo not-found)"
+            echo "  ninja     -> $(command -v ninja || echo not-found)"
+            echo "  clang     -> $(command -v clang || echo not-found)"
+            echo "  arm-none-eabi-gcc -> $(command -v arm-none-eabi-gcc || echo not-found)"
+            echo "  openocd   -> $(command -v openocd || echo not-found)"
+            echo "  clangd    -> $(command -v clangd || echo not-found)"
+          fi
         '';
       };
     };

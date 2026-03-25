@@ -14,10 +14,13 @@ CompileFlags:
     - c
 ---
 CompileFlags:
+  Compiler: arm-none-eabi-gcc
+  BuiltinHeaders: QueryDriver
+  Remove:
+    - --gcc-toolchain=*
+    - --target=*
   Add:
     - -std=c11
-    - --target=arm-none-eabi
     - -mcpu=cortex-m3
     - -mthumb
     - -ffreestanding
-    - --gcc-toolchain=/opt/arm-gnu-toolchain-15.2.rell

@@ -10,7 +10,7 @@
 #ifndef __DRI_LL_RCC_H__
 #define __DRI_LL_RCC_H__
 
-#include <stdbool.h>
+#include "data_type.h"
 
 #ifdef __cplusplus // 兼容 C++ 编译器
 extern "C"

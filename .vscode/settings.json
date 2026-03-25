@@ -1,8 +1,14 @@
 {
+    "clangd.path": "nix",
     "clangd.arguments": [
+        "develop",
+        "--quiet",
+        ".",
+        "--command",
+        "clangd",
         "--background-index",
         "--header-insertion=never",
-        "--query-driver=/opt/arm-gnu-toolchain-15.2.rell/bin/arm-none-eabi-*"
+        "--query-driver=arm-none-eabi-*,/nix/store/*/bin/arm-none-eabi-*"
     ],
     "files.associations": {
         "*.h": "c",
