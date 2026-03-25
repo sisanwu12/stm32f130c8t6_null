@@ -19,8 +19,14 @@
  */
 void list_node_init(list_node_t *node)
 {
+    if (node == NULL)
+    {
+        return;
+    }
+
     node->prev = NULL;
     node->next = NULL;
+    node->owner = NULL;
 }
 
 /**
@@ -30,6 +36,11 @@ void list_node_init(list_node_t *node)
  */
 void list_init(list_t *list)
 {
+    if (list == NULL)
+    {
+        return;
+    }
+
     list->head       = NULL;
     list->tail       = NULL;
     list->item_count = 0U;
@@ -40,11 +51,24 @@ void list_init(list_t *list)
  *
  * @param list 目标链表。
  * @param node 待插入的链表节点。
+ *
+ * @return uint8_t 非 0 表示插入成功，0 表示插入失败。
  */
-void list_insert_head(list_t *list, list_node_t *node)
+uint8_t list_insert_head(list_t *list, list_node_t *node)
 {
+    if ((list == NULL) || (node == NULL))
+    {
+        return 0U;
+    }
+
+    if (node->owner != NULL)
+    {
+        return 0U;
+    }
+
     node->prev = NULL;
     node->next = list->head;
+    node->owner = list;
 
     if (list->head != NULL)
     {
@@ -57,6 +81,8 @@ void list_insert_head(list_t *list, list_node_t *node)
 
     list->head = node;
     list->item_count++;
+
+    return 1U;
 }
 
 /**
@@ -64,11 +90,24 @@ void list_insert_head(list_t *list, list_node_t *node)
  *
  * @param list 目标链表。
  * @param node 待插入的链表节点。
+ *
+ * @return uint8_t 非 0 表示插入成功，0 表示插入失败。
  */
-void list_insert_tail(list_t *list, list_node_t *node)
+uint8_t list_insert_tail(list_t *list, list_node_t *node)
 {
+    if ((list == NULL) || (node == NULL))
+    {
+        return 0U;
+    }
+
+    if (node->owner != NULL)
+    {
+        return 0U;
+    }
+
     node->prev = list->tail;
     node->next = NULL;
+    node->owner = list;
 
     if (list->tail != NULL)
     {
@@ -81,6 +120,8 @@ void list_insert_tail(list_t *list, list_node_t *node)
 
     list->tail = node;
     list->item_count++;
+
+    return 1U;
 }
 
 /**
@@ -88,9 +129,21 @@ void list_insert_tail(list_t *list, list_node_t *node)
  *
  * @param list 目标链表。
  * @param node 待移除的链表节点。
+ *
+ * @return uint8_t 非 0 表示移除成功，0 表示移除失败。
  */
-void list_remove(list_t *list, list_node_t *node)
+uint8_t list_remove(list_t *list, list_node_t *node)
 {
+    if ((list == NULL) || (node == NULL))
+    {
+        return 0U;
+    }
+
+    if (node->owner != list)
+    {
+        return 0U;
+    }
+
     if (node->prev != NULL)
     {
         node->prev->next = node->next;
@@ -111,11 +164,14 @@ void list_remove(list_t *list, list_node_t *node)
 
     node->prev = NULL;
     node->next = NULL;
+    node->owner = NULL;
 
     if (list->item_count > 0U)
     {
         list->item_count--;
     }
+
+    return 1U;
 }
 
 /**
@@ -127,11 +183,21 @@ void list_remove(list_t *list, list_node_t *node)
  */
 list_node_t *list_remove_head(list_t *list)
 {
-    list_node_t *node = list->head;
+    list_node_t *node = NULL;
+
+    if (list == NULL)
+    {
+        return NULL;
+    }
+
+    node = list->head;
 
     if (node != NULL)
     {
-        list_remove(list, node);
+        if (list_remove(list, node) == 0U)
+        {
+            return NULL;
+        }
     }
 
     return node;
@@ -146,5 +212,10 @@ list_node_t *list_remove_head(list_t *list)
  */
 uint8_t list_is_empty(const list_t *list)
 {
+    if (list == NULL)
+    {
+        return 1U;
+    }
+
     return (uint8_t)(list->item_count == 0U);
 }

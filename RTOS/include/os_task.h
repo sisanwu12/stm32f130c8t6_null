@@ -37,7 +37,7 @@ typedef enum {
 typedef struct tcb {
     uint32_t *sp;              // 当前任务栈顶指针
     uint32_t *stack_base;      // 栈起始地址
-    uint32_t  stack_size;      // 栈大小
+    uint32_t  stack_size;      // 栈深度，单位为uint32_t
 
     task_entry_t entry;        // 任务入口函数
     void       *param;         // 任务参数
@@ -62,7 +62,7 @@ typedef struct ready_queue {
 void ready_queue_init(ready_queue_t *queue);
 void ready_queue_insert_tail(ready_queue_t *queue, tcb_t *task);
 void ready_queue_remove(ready_queue_t *queue, tcb_t *task);
-tcb_t *ready_queue_peek_highest(ready_queue_t *queue);
+const tcb_t *ready_queue_peek_highest(const ready_queue_t *queue);
 uint8_t ready_queue_get_highest_priority(const ready_queue_t *queue, uint8_t *priority);
 void ready_queue_rotate(ready_queue_t *queue, uint8_t priority);
 uint8_t ready_queue_is_empty(const ready_queue_t *queue);

@@ -13,6 +13,18 @@
 #include "os_task.h"
 
 /**
+ * @brief 判断优先级是否落在当前就绪队列支持的范围内。
+ *
+ * @param priority 待检查的任务优先级。
+ *
+ * @return uint8_t 非 0 表示优先级有效，0 表示优先级越界。
+ */
+static uint8_t ready_queue_priority_is_valid(uint8_t priority)
+{
+    return (uint8_t)(priority < OS_MAX_PRIORITIES);
+}
+
+/**
  * @brief 根据优先级生成对应的就绪位图掩码。
  *
  * @param priority 任务优先级，数值越小优先级越高。
@@ -21,6 +33,11 @@
  */
 static uint32_t ready_queue_priority_mask(uint8_t priority)
 {
+    if (ready_queue_priority_is_valid(priority) == 0U)
+    {
+        return 0U;
+    }
+
     return (uint32_t)(1UL << priority);
 }
 
@@ -32,6 +49,11 @@ static uint32_t ready_queue_priority_mask(uint8_t priority)
 void ready_queue_init(ready_queue_t *queue)
 {
     uint32_t priority = 0U;
+
+    if (queue == NULL)
+    {
+        return;
+    }
 
     queue->ready_bitmap = 0U;
 
@@ -49,9 +71,25 @@ void ready_queue_init(ready_queue_t *queue)
  */
 void ready_queue_insert_tail(ready_queue_t *queue, tcb_t *task)
 {
-    uint8_t priority = task->priority;
+    uint8_t priority = 0U;
 
-    list_insert_tail(&queue->ready_lists[priority], &task->sched_node);
+    if ((queue == NULL) || (task == NULL))
+    {
+        return;
+    }
+
+    priority = task->priority;
+
+    if (ready_queue_priority_is_valid(priority) == 0U)
+    {
+        return;
+    }
+
+    if (list_insert_tail(&queue->ready_lists[priority], &task->sched_node) == 0U)
+    {
+        return;
+    }
+
     queue->ready_bitmap |= ready_queue_priority_mask(priority);
     task->state = TASK_READY;
 }
@@ -64,10 +102,27 @@ void ready_queue_insert_tail(ready_queue_t *queue, tcb_t *task)
  */
 void ready_queue_remove(ready_queue_t *queue, tcb_t *task)
 {
-    uint8_t priority = task->priority;
-    list_t *list     = &queue->ready_lists[priority];
+    uint8_t priority = 0U;
+    list_t *list     = NULL;
 
-    list_remove(list, &task->sched_node);
+    if ((queue == NULL) || (task == NULL))
+    {
+        return;
+    }
+
+    priority = task->priority;
+
+    if (ready_queue_priority_is_valid(priority) == 0U)
+    {
+        return;
+    }
+
+    list = &queue->ready_lists[priority];
+
+    if (list_remove(list, &task->sched_node) == 0U)
+    {
+        return;
+    }
 
     if (list_is_empty(list) != 0U)
     {
@@ -87,7 +142,7 @@ uint8_t ready_queue_get_highest_priority(const ready_queue_t *queue, uint8_t *pr
 {
     uint8_t current = 0U;
 
-    if (queue->ready_bitmap == 0U)
+    if ((queue == NULL) || (queue->ready_bitmap == 0U))
     {
         return 0U;
     }
@@ -112,12 +167,12 @@ uint8_t ready_queue_get_highest_priority(const ready_queue_t *queue, uint8_t *pr
  *
  * @param queue 待查询的就绪队列。
  *
- * @return tcb_t* 当前最高优先级的任务控制块；若队列为空则返回 NULL。
+ * @return const tcb_t* 当前最高优先级的任务控制块只读指针；若队列为空则返回 NULL。
  */
-tcb_t *ready_queue_peek_highest(ready_queue_t *queue)
+const tcb_t *ready_queue_peek_highest(const ready_queue_t *queue)
 {
     uint8_t priority   = 0U;
-    list_t *ready_list = NULL;
+    const list_t *ready_list = NULL;
 
     if (ready_queue_get_highest_priority(queue, &priority) == 0U)
     {
@@ -145,6 +200,16 @@ void ready_queue_rotate(ready_queue_t *queue, uint8_t priority)
     list_t      *ready_list = NULL;
     list_node_t *node       = NULL;
 
+    if (queue == NULL)
+    {
+        return;
+    }
+
+    if (ready_queue_priority_is_valid(priority) == 0U)
+    {
+        return;
+    }
+
     ready_list = &queue->ready_lists[priority];
 
     if (ready_list->item_count <= 1U)
@@ -156,7 +221,7 @@ void ready_queue_rotate(ready_queue_t *queue, uint8_t priority)
 
     if (node != NULL)
     {
-        list_insert_tail(ready_list, node);
+        (void)list_insert_tail(ready_list, node);
     }
 }
 
@@ -169,5 +234,10 @@ void ready_queue_rotate(ready_queue_t *queue, uint8_t priority)
  */
 uint8_t ready_queue_is_empty(const ready_queue_t *queue)
 {
+    if (queue == NULL)
+    {
+        return 1U;
+    }
+
     return (uint8_t)(queue->ready_bitmap == 0U);
 }
