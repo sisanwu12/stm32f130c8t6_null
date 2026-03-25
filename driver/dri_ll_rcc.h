@@ -10,6 +10,8 @@
 #ifndef __DRI_LL_RCC_H__
 #define __DRI_LL_RCC_H__
 
+#include <stdbool.h>
+
 #ifdef __cplusplus // 兼容 C++ 编译器
 extern "C"
 {      // 使用 C 链接方式导出接口
@@ -31,5 +33,15 @@ extern "C"
 #define DRI_LL_RCC_APB1ENR_OFFSET  0x1CUL // APB1 外设时钟使能寄存器
 #define DRI_LL_RCC_BDCR_OFFSET     0x20UL // 备份域控制寄存器
 #define DRI_LL_RCC_CSR_OFFSET      0x24UL // 控制/状态寄存器
+
+    /* ========== 对内接口 ========== */
+
+    /* ========== 对外接口 ========== */
+    void dri_ll_rcc_apb2_enable(void);
+    void dri_ll_rcc_apb2_disable(void);
+
+#ifdef __cplusplus // 兼容 C++ 编译器
+} // 结束 C 链接方式导出
+#endif // 结束 C++ 兼容判断
 
 #endif /* __DRI_LL_RCC_H__ */
