@@ -1,0 +1,121 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "CMake Configure",
+      "type": "shell",
+      "command": "nix",
+      "args": [
+        "develop",
+        "-c",
+        "cmake",
+        "-S",
+        "${workspaceFolder}/project",
+        "-B",
+        "${workspaceFolder}/build",
+        "-G",
+        "Ninja",
+        "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/project/arm-gnu-none-eabi.cmake"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "CMake Build",
+      "type": "shell",
+      "command": "nix",
+      "args": [
+        "develop",
+        "-c",
+        "cmake",
+        "--build",
+        "${workspaceFolder}/build",
+        "--target",
+        "all"
+      ],
+      "dependsOn": [
+        "CMake Configure"
+      ],
+      "dependsOrder": "sequence",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": {
+        "owner": "c",
+        "source": "arm-none-eabi-gcc",
+        "fileLocation": [
+          "absolute"
+        ],
+        "pattern": {
+          "regexp": "^(.*?):(\\d+):(\\d+):\\s+(warning|error|note):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      }
+    },
+    {
+      "label": "Debug Build",
+      "dependsOn": [
+        "CMake Build"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Flash",
+      "type": "shell",
+      "command": "nix",
+      "args": [
+        "develop",
+        "-c",
+        "openocd",
+        "-f",
+        "interface/cmsis-dap.cfg",
+        "-f",
+        "target/stm32f1x.cfg",
+        "-c",
+        "program ${workspaceFolder}/build/null_proj.elf verify reset exit"
+      ],
+      "dependsOn": [
+        "CMake Build"
+      ],
+      "dependsOrder": "sequence",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Clean",
+      "type": "shell",
+      "command": "nix",
+      "args": [
+        "develop",
+        "-c",
+        "cmake",
+        "-E",
+        "rm",
+        "-rf",
+        "${workspaceFolder}/build",
+        "${workspaceFolder}/.cache"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
+}

@@ -32,5 +32,11 @@
             "overrideName": true
         }
     },
-    "terminal.integrated.defaultProfile.linux": "bash (nix develop)"
+    "terminal.integrated.defaultProfile.linux": "bash (nix develop)",
+    "terminal.integrated.automationProfile.linux": {
+        "path": "bash",
+        "args": [
+            "-lc"
+        ]
+    }
 }
