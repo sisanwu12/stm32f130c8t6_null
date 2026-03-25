@@ -39,4 +39,5 @@
             "-lc"
         ]
     },
+    "cmake.sourceDirectory": "${workspaceFolder}/project"
 }
