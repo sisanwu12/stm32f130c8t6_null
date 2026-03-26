@@ -26,9 +26,11 @@ os_status_t os_kernel_start(void)
 
     /* 先让调度器选出当前应当运行的首任务。 */
     status = task_schedule();
-    if (status == OS_STATUS_EMPTY)
+    if ((status == OS_STATUS_EMPTY) || (status == OS_STATUS_NOT_INITIALIZED))
     {
-        return status;
+        /* fresh boot 且还没有创建任何任务时，调度器全局状态可能尚未建立。
+         * 对启动接口来说，这和“当前没有 runnable task”是同一类结果。 */
+        return OS_STATUS_EMPTY;
     }
 
     /* 启动入口只接受“已有首任务待切入”这一种正常状态。 */
