@@ -2,6 +2,10 @@
  * @file dri_ll.h
  * @author sisanwu12
  * @brief 定义寄存器基础操作
+ * @note
+ * - 该文件提供了对寄存器的基本读写、位操作和字段操作函数，供各个外设驱动使用。
+ * 注意：set_bits / clear_bits / modify_reg 仅适用于普通 R/W 寄存器位，
+ * 不适用于 W1C、只写、读后清零等特殊语义寄存器
  * @version 0.1
  * @date 2026-03-31
  *
@@ -17,7 +21,8 @@
 /* 写寄存器函数 */
 static inline void dri_ll_write_reg(uptr base_addr, uptr offset, u32 value)
 {
-    *(volatile u32*)(base_addr + offset) = value;
+    volatile u32* reg_addr = (volatile u32*)(base_addr + offset);
+    *reg_addr              = value;
 }
 
 /* 读寄存器函数 */
@@ -53,6 +58,75 @@ static inline void dri_ll_modify_reg(uptr base_addr, uptr offset, u32 clear_mask
 {
     volatile u32* reg_addr = (volatile u32*)(base_addr + offset);
     *reg_addr              = (*reg_addr & ~clear_mask) | set_mask;
+}
+
+/**
+ * @brief 位状态检查函数
+ *
+ * @param base_addr
+ * @param offset
+ * @param bits
+ * @return bool
+ */
+static inline bool dri_ll_is_bits_set(uptr base_addr, uptr offset, u32 bits)
+{
+    return (dri_ll_read_reg(base_addr, offset) & bits) == bits;
+}
+
+/**
+ * @brief 位状态清除检查函数
+ *
+ * @param base_addr
+ * @param offset
+ * @param bits
+ * @return bool
+ */
+static inline bool dri_ll_is_bits_clear(uptr base_addr, uptr offset, u32 bits)
+{
+    return (dri_ll_read_reg(base_addr, offset) & bits) == 0U;
+}
+
+/**
+ * @brief 读取寄存器字段函数
+ *
+ * @param base_addr
+ * @param offset
+ * @param mask
+ * @param pos
+ * @return u32
+ */
+static inline u32 dri_ll_read_field(uptr base_addr, uptr offset, u32 mask, u32 pos)
+{
+    return (dri_ll_read_reg(base_addr, offset) & mask) >> pos;
+}
+
+/**
+ * @brief 等待寄存器位被置位函数
+ *
+ * @param base_addr
+ * @param offset
+ * @param bits
+ */
+static inline void dri_ll_wait_bits_set(uptr base_addr, uptr offset, u32 bits)
+{
+    while ((dri_ll_read_reg(base_addr, offset) & bits) != bits)
+    {
+    }
+}
+
+/**
+ * @brief 等待寄存器位被清除函数
+ *
+ * @param base_addr
+ * @param offset
+ * @param bits
+ */
+
+static inline void dri_ll_wait_bits_clear(uptr base_addr, uptr offset, u32 bits)
+{
+    while ((dri_ll_read_reg(base_addr, offset) & bits) != 0U)
+    {
+    }
 }
 
 #endif /* __DRI_LL_H__ */
