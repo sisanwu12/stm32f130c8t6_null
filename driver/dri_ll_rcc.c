@@ -82,45 +82,53 @@ void dri_ll_rcc_hse_bypass_disable(void)
 /* ========== 系统时钟选择与预分频 ========== */
 
 /* 系统时钟选择 */
+
+/**
+ * @brief 选择系统时钟源
+ *
+ * @param sysclk_source 系统时钟源
+ *        0x00000000UL: HSI 作为系统时钟
+ *        0x00000001UL: HSE 作为系统时钟
+ *        0x00000002UL: PLL 作为系统时钟
+ */
 void dri_ll_rcc_sysclk_select(u32 sysclk_source)
 {
-    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, CFGR_SWS0 | CFGR_SWS1,
-                      sysclk_source & CFGR_SW0); // 设置 SW 位
+    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, CFGR_SW,
+                      (sysclk_source & CFGR_SW)); // 设置 SW 位
 }
 
 /* AHB 和 APB 预分频设置 */
 void dri_ll_rcc_ahb_prescaler_set(u32 ahb_prescaler)
 {
-    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, 0x000000F0UL,
-                      ahb_prescaler & 0x000000F0UL); // 设置 HPRE 位
+    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, CFGR_HPRE,
+                      (ahb_prescaler & CFGR_HPRE)); // 设置 HPRE 位
 }
 
 /* APB1 预分频设置 */
 void dri_ll_rcc_apb1_prescaler_set(u32 apb1_prescaler)
 {
-    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, 0x00001C00UL,
-                      apb1_prescaler & 0x00001C00UL); // 设置 PPRE1 位
+    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, CFGR_PPRE1,
+                      (apb1_prescaler & CFGR_PPRE1)); // 设置 PPRE1 位
 }
 
 /* APB2 预分频设置 */
 void dri_ll_rcc_apb2_prescaler_set(u32 apb2_prescaler)
 {
-    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, 0x00003800UL,
-                      apb2_prescaler & 0x00003800UL); // 设置 PPRE2 位
+    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, CFGR_PPRE2,
+                      (apb2_prescaler & CFGR_PPRE2)); // 设置 PPRE2 位
 }
 
 /* 获取系统时钟源 */
 u32 dri_ll_rcc_sysclk_source_get(void)
 {
-    return dri_ll_read_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET) &
-           0x00000003UL; // 获取 SW 位
+    return dri_ll_read_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET) & CFGR_SW; // 获取 SW 位
 }
 
 /* 获取系统时钟状态 */
 u32 dri_ll_rcc_sysclk_status_get(void)
 {
     return (dri_ll_read_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET) >> 2) &
-           0x00000003UL; // 获取并对齐 SWS 位
+           (CFGR_SWS >> 2); // 获取并对齐 SWS 位
 }
 
 /* ========== PLL 配置 ========== */
@@ -128,29 +136,29 @@ u32 dri_ll_rcc_sysclk_status_get(void)
 /* 设置 PLL 时钟源 */
 void dri_ll_rcc_pll_source_set(u32 source)
 {
-    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, 0x00010000UL,
-                      source & 0x00010000UL); // 设置 PLLSRC 位
+    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, CFGR_PLLSRC,
+                      source & CFGR_PLLSRC); // 设置 PLLSRC 位
 }
 
 /* 设置 PLL 倍频 */
 void dri_ll_rcc_pll_mul_set(u32 value)
 {
-    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, 0x003C0000UL,
-                      value & 0x003C0000UL); // 设置 PLLMUL 位
+    dri_ll_modify_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET, CFGR_PLLMUL,
+                      value & CFGR_PLLMUL); // 设置 PLLMUL 位
 }
 
 /* 获取 PLL 时钟源 */
 u32 dri_ll_rcc_pll_source_get(void)
 {
     return dri_ll_read_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET) &
-           0x00010000UL; // 获取 PLLSRC 位
+           CFGR_PLLSRC; // 获取 PLLSRC 位
 }
 
 /* 获取 PLL 倍频 */
 u32 dri_ll_rcc_pll_mul_get(void)
 {
     return dri_ll_read_reg(DRI_LL_RCC_BASE_ADDR, DRI_LL_RCC_CFGR_OFFSET) &
-           0x003C0000UL; // 获取 PLLMUL 位
+           CFGR_PLLMUL; // 获取 PLLMUL 位
 }
 
 /* ========== 外设时钟门控 ========== */

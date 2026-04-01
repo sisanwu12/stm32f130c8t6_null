@@ -65,32 +65,47 @@ typedef enum
 /* cfgr寄存器位定义 */
 typedef enum
 {
-    CFGR_SW0      = (1UL << 0),  // 系统时钟选择位 0
-    CFGR_SW1      = (1UL << 1),  // 系统时钟选择位 1
-    CFGR_SWS0     = (1UL << 2),  // 系统时钟状态位 0
-    CFGR_SWS1     = (1UL << 3),  // 系统时钟状态位 1
-    CFGR_HPRE0    = (1UL << 4),  // AHB 预分频位 0
-    CFGR_HPRE1    = (1UL << 5),  // AHB 预分频位 1
-    CFGR_HPRE2    = (1UL << 6),  // AHB 预分频位 2
-    CFGR_HPRE3    = (1UL << 7),  // AHB 预分频位 3
-    CFGR_PPRE10   = (1UL << 8),  // APB1 预分频位 0
-    CFGR_PPRE11   = (1UL << 9),  // APB1 预分频位 1
-    CFGR_PPRE12   = (1UL << 10), // APB1 预分频位 2
-    CFGR_PPRE20   = (1UL << 11), // APB2 预分频位 0
-    CFGR_PPRE21   = (1UL << 12), // APB2 预分频位 1
-    CFGR_PPRE22   = (1UL << 13), // APB2 预分频位 2
-    CFGR_ADCPRE0  = (1UL << 14), // ADC 预分频位 0
-    CFGR_ADCPRE1  = (1UL << 15), // ADC 预分频位 1
-    CFGR_PLLSRC   = (1UL << 16), // PLL 时钟源选择位
-    CFGR_PLLXTPRE = (1UL << 17), // PLL HSE 分频位
-    CFGR_PLLMUL0  = (1UL << 18), // PLL 倍频位 0
-    CFGR_PLLMUL1  = (1UL << 19), // PLL 倍频位 1
-    CFGR_PLLMUL2  = (1UL << 20), // PLL 倍频位 2
-    CFGR_PLLMUL3  = (1UL << 21), // PLL 倍频位 3
-    CFGR_OTGFSPRE = (1UL << 22), // OTG FS 预分频位 0
-    CFGR_MCO0     = (1UL << 24), // MCO 输出位 0
-    CFGR_MCO1     = (1UL << 25), // MCO 输出位 1
-    CFGR_MCO2     = (1UL << 26), // MCO 输出位 2
+    CFGR_SW0 = (1UL << 0),            // 系统时钟选择位 0
+    CFGR_SW1 = (1UL << 1),            // 系统时钟选择位 1
+    CFGR_SW  = (CFGR_SW0 | CFGR_SW1), // 系统时钟选择位掩码
+
+    CFGR_SWS0 = (1UL << 2),              // 系统时钟状态位 0
+    CFGR_SWS1 = (1UL << 3),              // 系统时钟状态位 1
+    CFGR_SWS  = (CFGR_SWS0 | CFGR_SWS1), // 系统时钟状态位掩码
+
+    CFGR_HPRE0 = (1UL << 4),                                          // AHB 预分频位 0
+    CFGR_HPRE1 = (1UL << 5),                                          // AHB 预分频位 1
+    CFGR_HPRE2 = (1UL << 6),                                          // AHB 预分频位 2
+    CFGR_HPRE3 = (1UL << 7),                                          // AHB 预分频位 3
+    CFGR_HPRE  = (CFGR_HPRE0 | CFGR_HPRE1 | CFGR_HPRE2 | CFGR_HPRE3), // AHB 预分频位掩码
+
+    CFGR_PPRE10 = (1UL << 8),                                // APB1 预分频位 0
+    CFGR_PPRE11 = (1UL << 9),                                // APB1 预分频位 1
+    CFGR_PPRE12 = (1UL << 10),                               // APB1 预分频位 2
+    CFGR_PPRE1  = (CFGR_PPRE10 | CFGR_PPRE11 | CFGR_PPRE12), // APB1 预分频位掩码
+
+    CFGR_PPRE20 = (1UL << 11),                               // APB2 预分频位 0
+    CFGR_PPRE21 = (1UL << 12),                               // APB2 预分频位 1
+    CFGR_PPRE22 = (1UL << 13),                               // APB2 预分频位 2
+    CFGR_PPRE2  = (CFGR_PPRE20 | CFGR_PPRE21 | CFGR_PPRE22), // APB2 预分频位掩码
+
+    CFGR_ADCPRE0 = (1UL << 14),                   // ADC 预分频位 0
+    CFGR_ADCPRE1 = (1UL << 15),                   // ADC 预分频位 1
+    CFGR_ADCPRE  = (CFGR_ADCPRE0 | CFGR_ADCPRE1), // ADC 预分频位掩码
+
+    CFGR_PLLSRC   = (1UL << 16),                                                 // PLL 时钟源选择位
+    CFGR_PLLXTPRE = (1UL << 17),                                                 // PLL HSE 分频位
+    CFGR_PLLMUL0  = (1UL << 18),                                                 // PLL 倍频位 0
+    CFGR_PLLMUL1  = (1UL << 19),                                                 // PLL 倍频位 1
+    CFGR_PLLMUL2  = (1UL << 20),                                                 // PLL 倍频位 2
+    CFGR_PLLMUL3  = (1UL << 21),                                                 // PLL 倍频位 3
+    CFGR_PLLMUL   = (CFGR_PLLMUL0 | CFGR_PLLMUL1 | CFGR_PLLMUL2 | CFGR_PLLMUL3), // PLL 倍频位掩码
+
+    CFGR_OTGFSPRE = (1UL << 22),                         // OTG FS 预分频位 0
+    CFGR_MCO0     = (1UL << 24),                         // MCO 输出位 0
+    CFGR_MCO1     = (1UL << 25),                         // MCO 输出位 1
+    CFGR_MCO2     = (1UL << 26),                         // MCO 输出位 2
+    CFGR_MCO      = (CFGR_MCO0 | CFGR_MCO1 | CFGR_MCO2), // MCO 输出位掩码
 } dri_ll_rcc_cfgr_bits;
 
 /* ahb 高速时钟外设 */

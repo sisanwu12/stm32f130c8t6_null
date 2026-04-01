@@ -41,7 +41,14 @@ static inline void dri_ll_clear_bits(uptr base_addr, uptr offset, u32 bits)
     *reg_addr &= ~bits;
 }
 
-/* 修改寄存器函数 */
+/**
+ * @brief 修改寄存器函数
+ *
+ * @param base_addr 寄存器基地址
+ * @param offset 寄存器偏移地址
+ * @param clear_mask 要清除的位掩码
+ * @param set_mask 要设置的位掩码
+ */
 static inline void dri_ll_modify_reg(uptr base_addr, uptr offset, u32 clear_mask, u32 set_mask)
 {
     volatile u32* reg_addr = (volatile u32*)(base_addr + offset);
