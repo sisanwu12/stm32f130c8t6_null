@@ -18,26 +18,26 @@
  */
 system_init_status_t SystemInit(void)
 {
-    dri_ll_flash_prefetch_enable();
-    dri_ll_flash_latency_set(DRI_LL_FLASH_LATENCY_2);
+    ll_flash_prefetch_enable();
+    ll_flash_latency_set(LL_FLASH_LATENCY_2);
 
-    dri_ll_rcc_hse_bypass_disable();
-    dri_ll_rcc_hse_enable();
-    while (!dri_ll_rcc_hse_is_ready())
+    ll_rcc_hse_bypass_disable();
+    ll_rcc_hse_enable();
+    while (!ll_rcc_hse_is_ready())
         ;
 
-    dri_ll_rcc_ahb_prescaler_set(RCC_AHB_PRESCALER_DIV1);
-    dri_ll_rcc_apb1_prescaler_set(RCC_APB_PRESCALER_DIV2);
-    dri_ll_rcc_apb2_prescaler_set(RCC_APB_PRESCALER_DIV1);
+    ll_rcc_ahb_prescaler_set(LL_RCC_AHB_PRESCALER_DIV1);
+    ll_rcc_apb1_prescaler_set(LL_RCC_APB_PRESCALER_DIV2);
+    ll_rcc_apb2_prescaler_set(LL_RCC_APB_PRESCALER_DIV1);
 
-    dri_ll_rcc_pll_disable();
-    dri_ll_rcc_pll_source_set(RCC_PLL_SOURCE_HSE);
-    dri_ll_rcc_pll_hse_div_set(RCC_PLL_HSE_DIV_1);
-    dri_ll_rcc_pll_mul_set(RCC_PLL_MUL_9);
-    dri_ll_rcc_pll_enable();
+    ll_rcc_pll_disable();
+    ll_rcc_pll_source_set(LL_RCC_PLL_SOURCE_HSE);
+    ll_rcc_pll_hse_div_set(LL_RCC_PLL_HSE_DIV_1);
+    ll_rcc_pll_mul_set(LL_RCC_PLL_MUL_9);
+    ll_rcc_pll_enable();
 
-    dri_ll_rcc_sysclk_select(RCC_SYSCLK_SOURCE_PLL);
-    while (dri_ll_rcc_sysclk_status_get() != RCC_SYSCLK_STATUS_PLL)
+    ll_rcc_sysclk_select(LL_RCC_SYSCLK_SOURCE_PLL);
+    while (ll_rcc_sysclk_status_get() != LL_RCC_SYSCLK_STATUS_PLL)
         ;
 
     return SYSTEM_INIT_SUCCESS;

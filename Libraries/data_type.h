@@ -45,4 +45,18 @@ typedef bool isSET;
 typedef bool isREADY;
 typedef bool isERROR;
 
+/* ========== 寄存器操作相关类型 ==========*/
+
+/* 寄存器位掩码 */
+#define LL_MASK_1  (0b1UL)        // 1 位掩码
+#define LL_MASK_2  (0b11UL)       // 2 位掩码
+#define LL_MASK_3  (0b111UL)      // 3 位掩码
+#define LL_MASK_4  (0xFUL)        // 4 位掩码
+#define LL_MASK_5  (0b11111UL)    // 5 位掩码
+#define LL_MASK_6  (0b111111UL)   // 6 位掩码
+#define LL_MASK_7  (0b1111111UL)  // 7 位掩码
+#define LL_MASK_8  (0xFFUL)       // 8 位掩码
+#define LL_MASK_16 (0xFFFFUL)     // 16 位掩码
+#define LL_MASK_32 (0xFFFFFFFFUL) // 32 位掩码
+
 #endif /* __DATA_TYPE_H__ */
