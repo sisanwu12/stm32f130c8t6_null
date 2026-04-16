@@ -380,4 +380,99 @@
 
 /* ---------- 参数定义 ---------- */
 
+typedef enum
+{
+    LL_TIM_1 = 0U,
+    LL_TIM_2,
+    LL_TIM_3,
+    LL_TIM_4,
+} ll_tim_instance_t;
+
+typedef enum
+{
+    LL_TIM_CH1 = 0U,
+    LL_TIM_CH2,
+    LL_TIM_CH3,
+    LL_TIM_CH4,
+} ll_tim_channel_t;
+
+typedef enum
+{
+    LL_TIM_OK = 0U,
+    LL_TIM_ERROR_INVALID_PARAM,
+    LL_TIM_ERROR_UNSUPPORTED,
+} ll_tim_status_t;
+
+typedef enum
+{
+    LL_TIM_COUNTER_UP = 0U,
+    LL_TIM_COUNTER_DOWN,
+    LL_TIM_COUNTER_CENTER_1,
+    LL_TIM_COUNTER_CENTER_2,
+    LL_TIM_COUNTER_CENTER_3,
+} ll_tim_counter_mode_t;
+
+typedef enum
+{
+    LL_TIM_CKD_DIV1 = 0U,
+    LL_TIM_CKD_DIV2,
+    LL_TIM_CKD_DIV4,
+} ll_tim_clock_div_t;
+
+typedef enum
+{
+    LL_TIM_OC_FROZEN = 0U,
+    LL_TIM_OC_ACTIVE,
+    LL_TIM_OC_INACTIVE,
+    LL_TIM_OC_TOGGLE,
+    LL_TIM_OC_FORCE_LOW,
+    LL_TIM_OC_FORCE_HIGH,
+    LL_TIM_OC_PWM1,
+    LL_TIM_OC_PWM2,
+} ll_tim_oc_mode_t;
+
+typedef struct
+{
+    ll_tim_instance_t     instance;
+    u16                   prescaler;
+    u16                   auto_reload;
+    ll_tim_counter_mode_t counter_mode;
+    ll_tim_clock_div_t    clock_div;
+    bool                  arr_preload_enable;
+    u8                    repetition; // 仅 TIM1 有效
+} ll_tim_base_init_t;
+
+typedef struct
+{
+    ll_tim_instance_t instance;
+    ll_tim_channel_t  channel;
+    ll_tim_oc_mode_t  oc_mode;
+    u16               compare;
+    bool              preload_enable;
+    bool              polarity_low;
+} ll_tim_oc_init_t;
+
+ll_tim_status_t ll_tim_base_init(const ll_tim_base_init_t* cfg);
+void            ll_tim_counter_enable(ll_tim_instance_t instance);
+void            ll_tim_counter_disable(ll_tim_instance_t instance);
+void            ll_tim_set_prescaler(ll_tim_instance_t instance, u16 value);
+void            ll_tim_set_auto_reload(ll_tim_instance_t instance, u16 value);
+void            ll_tim_set_counter(ll_tim_instance_t instance, u16 value);
+u16             ll_tim_get_counter(ll_tim_instance_t instance);
+void            ll_tim_generate_event(ll_tim_instance_t instance, u32 event_mask);
+
+void  ll_tim_irq_enable(ll_tim_instance_t instance, u32 irq_mask);
+void  ll_tim_irq_disable(ll_tim_instance_t instance, u32 irq_mask);
+isSET ll_tim_is_flag_set(ll_tim_instance_t instance, u32 flag_mask);
+void  ll_tim_clear_flag(ll_tim_instance_t instance, u32 flag_mask);
+
+ll_tim_status_t ll_tim_oc_init(const ll_tim_oc_init_t* cfg);
+void            ll_tim_set_compare(ll_tim_instance_t instance, ll_tim_channel_t channel, u16 value);
+u16             ll_tim_get_compare(ll_tim_instance_t instance, ll_tim_channel_t channel);
+void            ll_tim_channel_enable(ll_tim_instance_t instance, ll_tim_channel_t channel);
+void            ll_tim_channel_disable(ll_tim_instance_t instance, ll_tim_channel_t channel);
+
+void ll_tim_main_output_enable(ll_tim_instance_t instance);  // TIM1 only
+void ll_tim_main_output_disable(ll_tim_instance_t instance); // TIM1 only
+
 #endif /* __DRI_LL.TIM_H__ */
