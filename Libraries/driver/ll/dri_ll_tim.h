@@ -380,99 +380,128 @@
 
 /* ---------- 参数定义 ---------- */
 
+/* TIM 实例 */
 typedef enum
 {
-    LL_TIM_1 = 0U,
-    LL_TIM_2,
-    LL_TIM_3,
-    LL_TIM_4,
+    LL_TIM_1 = 1U,
+    LL_TIM_2 = 2U,
+    LL_TIM_3 = 3U,
+    LL_TIM_4 = 4U,
 } ll_tim_instance_t;
 
+/* TIM 通道 */
 typedef enum
 {
     LL_TIM_CH1 = 0U,
-    LL_TIM_CH2,
-    LL_TIM_CH3,
-    LL_TIM_CH4,
+    LL_TIM_CH2 = 1U,
+    LL_TIM_CH3 = 2U,
+    LL_TIM_CH4 = 3U,
 } ll_tim_channel_t;
 
+/* TIM 状态 */
 typedef enum
 {
-    LL_TIM_OK = 0U,
-    LL_TIM_ERROR_INVALID_PARAM,
-    LL_TIM_ERROR_UNSUPPORTED,
+    LL_TIM_OK                  = 0U,
+    LL_TIM_ERROR_INVALID_PARAM = 1U, // 无效参数
+    LL_TIM_ERROR_UNSUPPORTED   = 2U, // 不支持的功能
 } ll_tim_status_t;
 
+/* TIM 计数模式 */
 typedef enum
 {
-    LL_TIM_COUNTER_UP = 0U,
-    LL_TIM_COUNTER_DOWN,
-    LL_TIM_COUNTER_CENTER_1,
-    LL_TIM_COUNTER_CENTER_2,
-    LL_TIM_COUNTER_CENTER_3,
+    LL_TIM_COUNTER_UP       = 0U, // 向上计数
+    LL_TIM_COUNTER_DOWN     = 1U, // 向下计数
+    LL_TIM_COUNTER_CENTER_1 = 2U, // 中心对齐模式 1
+    LL_TIM_COUNTER_CENTER_2 = 3U, // 中心对齐模式 2
+    LL_TIM_COUNTER_CENTER_3 = 4U, // 中心对齐模式 3
 } ll_tim_counter_mode_t;
 
+/* TIM 时钟分频 */
 typedef enum
 {
-    LL_TIM_CKD_DIV1 = 0U,
-    LL_TIM_CKD_DIV2,
-    LL_TIM_CKD_DIV4,
+    LL_TIM_CKD_DIV1 = 0U, // 不分频
+    LL_TIM_CKD_DIV2 = 1U, // 时钟频率/ 2
+    LL_TIM_CKD_DIV4 = 2U, // 时钟频率/ 4
 } ll_tim_clock_div_t;
 
+/* TIM 输出比较模式 */
 typedef enum
 {
-    LL_TIM_OC_FROZEN = 0U,
-    LL_TIM_OC_ACTIVE,
-    LL_TIM_OC_INACTIVE,
-    LL_TIM_OC_TOGGLE,
-    LL_TIM_OC_FORCE_LOW,
-    LL_TIM_OC_FORCE_HIGH,
-    LL_TIM_OC_PWM1,
-    LL_TIM_OC_PWM2,
+    LL_TIM_OC_FROZEN     = 0U, // 冻结模式
+    LL_TIM_OC_ACTIVE     = 1U, // 强制输出高电平
+    LL_TIM_OC_INACTIVE   = 2U, // 强制输出低电平
+    LL_TIM_OC_TOGGLE     = 3U, // 翻转模式
+    LL_TIM_OC_FORCE_LOW  = 4U, // 强制输出低电平
+    LL_TIM_OC_FORCE_HIGH = 5U, // 强制输出高电平
+    LL_TIM_OC_PWM1       = 6U, // PWM 模式 1
+    LL_TIM_OC_PWM2       = 7U, // PWM 模式 2
 } ll_tim_oc_mode_t;
 
+/* TIM 基础配置结构体 */
 typedef struct
 {
-    ll_tim_instance_t     instance;
-    u16                   prescaler;
-    u16                   auto_reload;
-    ll_tim_counter_mode_t counter_mode;
-    ll_tim_clock_div_t    clock_div;
-    bool                  arr_preload_enable;
-    u8                    repetition; // 仅 TIM1 有效
+    ll_tim_instance_t     instance;           // 定时器实例
+    u16                   prescaler;          // 预分频值
+    u16                   auto_reload;        // 自动重装载值
+    ll_tim_counter_mode_t counter_mode;       // 计数模式
+    ll_tim_clock_div_t    clock_div;          // 时钟分频
+    bool                  arr_preload_enable; // 自动重装载预装载使能
+    u8                    repetition;         // 仅 TIM1 有效
 } ll_tim_base_init_t;
 
+/* TIM 输出比较配置结构体 */
 typedef struct
 {
-    ll_tim_instance_t instance;
-    ll_tim_channel_t  channel;
-    ll_tim_oc_mode_t  oc_mode;
-    u16               compare;
-    bool              preload_enable;
-    bool              polarity_low;
+    ll_tim_instance_t instance;       // 定时器实例
+    ll_tim_channel_t  channel;        // 定时器通道
+    ll_tim_oc_mode_t  oc_mode;        // 输出比较模式
+    u16               compare;        // 比较值
+    bool              preload_enable; // 预装载使能
+    bool              polarity_low;   // 输出极性，true = 低电平有效，false = 高电平有效
 } ll_tim_oc_init_t;
 
+/* ========== 对外接口 ========== */
+
+/* 基础初始化 */
 ll_tim_status_t ll_tim_base_init(const ll_tim_base_init_t* cfg);
-void            ll_tim_counter_enable(ll_tim_instance_t instance);
-void            ll_tim_counter_disable(ll_tim_instance_t instance);
-void            ll_tim_set_prescaler(ll_tim_instance_t instance, u16 value);
-void            ll_tim_set_auto_reload(ll_tim_instance_t instance, u16 value);
-void            ll_tim_set_counter(ll_tim_instance_t instance, u16 value);
-u16             ll_tim_get_counter(ll_tim_instance_t instance);
-void            ll_tim_generate_event(ll_tim_instance_t instance, u32 event_mask);
+/* 计数器控制 */
+void ll_tim_counter_enable(ll_tim_instance_t instance);
+/* 计数器禁用 */
+void ll_tim_counter_disable(ll_tim_instance_t instance);
+/* 设置预分频器 */
+void ll_tim_set_prescaler(ll_tim_instance_t instance, u16 value);
+/* 设置自动重装载值 */
+void ll_tim_set_auto_reload(ll_tim_instance_t instance, u16 value);
+/* 设置计数器值 */
+void ll_tim_set_counter(ll_tim_instance_t instance, u16 value);
+/* 获取计数器值 */
+u16 ll_tim_get_counter(ll_tim_instance_t instance);
+/* 生成事件 */
+void ll_tim_generate_event(ll_tim_instance_t instance, u32 event_mask);
 
-void  ll_tim_irq_enable(ll_tim_instance_t instance, u32 irq_mask);
-void  ll_tim_irq_disable(ll_tim_instance_t instance, u32 irq_mask);
+/* 中断控制 */
+void ll_tim_irq_enable(ll_tim_instance_t instance, u32 irq_mask);
+/* 中断禁用 */
+void ll_tim_irq_disable(ll_tim_instance_t instance, u32 irq_mask);
+/* 标志位控制 */
 isSET ll_tim_is_flag_set(ll_tim_instance_t instance, u32 flag_mask);
-void  ll_tim_clear_flag(ll_tim_instance_t instance, u32 flag_mask);
+/* 清除标志位 */
+void ll_tim_clear_flag(ll_tim_instance_t instance, u32 flag_mask);
 
+/* 输出比较控制 */
 ll_tim_status_t ll_tim_oc_init(const ll_tim_oc_init_t* cfg);
-void            ll_tim_set_compare(ll_tim_instance_t instance, ll_tim_channel_t channel, u16 value);
-u16             ll_tim_get_compare(ll_tim_instance_t instance, ll_tim_channel_t channel);
-void            ll_tim_channel_enable(ll_tim_instance_t instance, ll_tim_channel_t channel);
-void            ll_tim_channel_disable(ll_tim_instance_t instance, ll_tim_channel_t channel);
+/* 设置比较值 */
+void ll_tim_set_compare(ll_tim_instance_t instance, ll_tim_channel_t channel, u16 value);
+/* 获取比较值 */
+u16 ll_tim_get_compare(ll_tim_instance_t instance, ll_tim_channel_t channel);
+/* 通道使能 */
+void ll_tim_channel_enable(ll_tim_instance_t instance, ll_tim_channel_t channel);
+/* 通道禁用 */
+void ll_tim_channel_disable(ll_tim_instance_t instance, ll_tim_channel_t channel);
 
-void ll_tim_main_output_enable(ll_tim_instance_t instance);  // TIM1 only
+/* 主输出控制 */
+void ll_tim_main_output_enable(ll_tim_instance_t instance); // TIM1 only
+/* 主输出禁用 */
 void ll_tim_main_output_disable(ll_tim_instance_t instance); // TIM1 only
 
 #endif /* __DRI_LL.TIM_H__ */
