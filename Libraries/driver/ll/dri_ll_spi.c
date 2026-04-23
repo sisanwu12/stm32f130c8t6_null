@@ -1,6 +1,6 @@
 /**
  * @file dri_ll_spi.c
- * @author sisanwu12
+ * @author Beam
  * @brief STM32F103 SPI 底层寄存器接口实现。
  * @version 0.1
  * @date 2026-04-23
@@ -32,7 +32,7 @@ static u8              ll_spi_read_dr8(uptr base_addr);
  */
 ll_spi_status_t ll_spi_init(const ll_spi_init_t* cfg)
 {
-    u32 cr1_value = 0U;
+    u32  cr1_value = 0U;
     uptr base_addr;
 
     if (cfg == NULL)
@@ -281,8 +281,8 @@ ll_spi_status_t ll_spi_transfer_buffer(ll_spi_instance_t instance, const u8* tx_
 
     for (index = 0U; index < len; index++)
     {
-        ll_spi_status_t ret = ll_spi_transfer_byte(instance, tx_buf[index], &rx_buf[index],
-                                                   timeout_count);
+        ll_spi_status_t ret =
+            ll_spi_transfer_byte(instance, tx_buf[index], &rx_buf[index], timeout_count);
         if (ret != LL_SPI_OK)
         {
             return ret;

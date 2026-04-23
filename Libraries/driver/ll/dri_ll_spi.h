@@ -1,6 +1,6 @@
 /**
  * @file dri_ll_spi.h
- * @author sisanwu12
+ * @author Beam
  * @brief STM32F103 SPI 底层寄存器接口。
  * @note
  * - SPI v1 只负责 `SPI1/SPI2` 主机模式、默认 `SCK/MISO/MOSI` 引脚、阻塞轮询收发。
@@ -38,19 +38,19 @@
 /* ---------- SPI 寄存器位/字段定义 ---------- */
 
 /* SPI_CR1 位位置 */
-#define LL_SPI_CR1_CPHA_POS      0U  // 时钟相位
-#define LL_SPI_CR1_CPOL_POS      1U  // 时钟极性
-#define LL_SPI_CR1_MSTR_POS      2U  // 主机选择
-#define LL_SPI_CR1_BR_POS        3U  // 波特率分频
-#define LL_SPI_CR1_SPE_POS       6U  // SPI 使能
-#define LL_SPI_CR1_LSBFIRST_POS  7U  // 帧格式
-#define LL_SPI_CR1_SSI_POS       8U  // 内部从设备选择
-#define LL_SPI_CR1_SSM_POS       9U  // 软件从设备管理
-#define LL_SPI_CR1_RXONLY_POS    10U // 仅接收模式
-#define LL_SPI_CR1_DFF_POS       11U // 数据帧格式
-#define LL_SPI_CR1_CRCEN_POS     13U // 硬件 CRC 使能
-#define LL_SPI_CR1_BIDIOE_POS    14U // 双向输出使能
-#define LL_SPI_CR1_BIDIMODE_POS  15U // 双向模式使能
+#define LL_SPI_CR1_CPHA_POS     0U  // 时钟相位
+#define LL_SPI_CR1_CPOL_POS     1U  // 时钟极性
+#define LL_SPI_CR1_MSTR_POS     2U  // 主机选择
+#define LL_SPI_CR1_BR_POS       3U  // 波特率分频
+#define LL_SPI_CR1_SPE_POS      6U  // SPI 使能
+#define LL_SPI_CR1_LSBFIRST_POS 7U  // 帧格式
+#define LL_SPI_CR1_SSI_POS      8U  // 内部从设备选择
+#define LL_SPI_CR1_SSM_POS      9U  // 软件从设备管理
+#define LL_SPI_CR1_RXONLY_POS   10U // 仅接收模式
+#define LL_SPI_CR1_DFF_POS      11U // 数据帧格式
+#define LL_SPI_CR1_CRCEN_POS    13U // 硬件 CRC 使能
+#define LL_SPI_CR1_BIDIOE_POS   14U // 双向输出使能
+#define LL_SPI_CR1_BIDIMODE_POS 15U // 双向模式使能
 
 /* SPI_CR1 位掩码 */
 #define LL_SPI_CR1_CPHA_MASK     (LL_MASK_1 << LL_SPI_CR1_CPHA_POS)
@@ -134,10 +134,10 @@ typedef enum
 /* SPI 初始化结构体 */
 typedef struct
 {
-    ll_spi_instance_t       instance;        // SPI 实例
-    ll_spi_mode_t           mode;            // SPI 模式
-    ll_spi_baud_prescaler_t baud_prescaler;  // 波特率分频
-    ll_spi_first_bit_t      first_bit;       // 首位传输顺序
+    ll_spi_instance_t       instance;       // SPI 实例
+    ll_spi_mode_t           mode;           // SPI 模式
+    ll_spi_baud_prescaler_t baud_prescaler; // 波特率分频
+    ll_spi_first_bit_t      first_bit;      // 首位传输顺序
 } ll_spi_init_t;
 
 /* ========== 对外接口 ========== */
